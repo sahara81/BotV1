@@ -94,13 +94,25 @@ async def delete_message(_, message):
         print(f"An error occurred: {e}/nGroup ID: {chat_id}")    
 # Flask configuration
 app = Flask(__name__)
+
 @app.route('/')
 def index():
+    # Normal visit pe Telegram pe redirect
     return redirect(f"https://telegram.me/{BOT_USERNAME}", code=302)
 
+# 👇 Ye naya endpoint hum keep-alive ke liye use karenge
+@app.route('/ping')
+def ping():
+    return "alive", 200
+
 def run():
+    # Render yahi port env me deta hai
     app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 8080)))
+
 if __name__ == "__main__":
+    # Flask server alag thread me
     t = Thread(target=run)
     t.start()
+
+    # Pyrogram bot run hoga
     bot.run()
